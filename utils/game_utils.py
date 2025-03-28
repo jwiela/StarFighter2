@@ -16,6 +16,10 @@ def handleEvents(player):
         player.move('left')
     if keys[pygame.K_RIGHT]:
         player.move('right')
+    if keys[pygame.K_UP]:
+        player.move('up')
+    if keys[pygame.K_DOWN]:
+        player.move('down')
     if keys[pygame.K_SPACE]:
         player.shoot()
 

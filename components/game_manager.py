@@ -4,6 +4,7 @@ from components.game_window import GameWindow
 from components.Asteroid import Asteroid
 import utils.collision as collision
 from utils.game_utils import handleEvents, updateGameLogic, drawGameObjects
+import sys
 
 WIDTH, HEIGHT = 800, 600
 
@@ -12,32 +13,36 @@ def gameLoop():
     pygame.init()
     window = GameWindow(WIDTH, HEIGHT)
     font = pygame.font.Font(None, 36)
+    running = True
     
-    while True:  # Outer loop to allow game restart
+    while running:  # Outer loop to allow game restart
         player = Player(WIDTH, HEIGHT)
         asteroids = []
         clock = pygame.time.Clock()
         score = 0
-        running = True
+        gameOver = False
         
-        while running:
+        while not gameOver:
             window.clear()
-            
+
             running = handleEvents(player)
+
+            if not running:
+                pygame.quit()
+                sys.exit()
+            
             score, gameOver = updateGameLogic(player, asteroids, WIDTH, HEIGHT, score)
-            
-            if gameOver:
-                play_again = showGameOverScreen(window, font, score)
-                if not play_again:
-                    pygame.quit()
-                    return  # Exit the function instead of using exit()
-                break  # Break the inner loop to restart the game
-            
+
             drawGameObjects(window, player, asteroids, score, font)
             window.update()
-            clock.tick(30)
-    
+            clock.tick(30)  # Limit to 30 FPS
+
+        play_again = showGameOverScreen(window, font, score)
+        if not play_again:
+            running = False
+
     pygame.quit()
+    sys.exit()
 
 def showGameOverScreen(window, font, score):
     """Displays Game Over screen with restart or quit options."""
@@ -61,7 +66,7 @@ def showGameOverScreen(window, font, score):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                return False
+                sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = event.pos
                 if play_again_rect.collidepoint(mouse_x, mouse_y):

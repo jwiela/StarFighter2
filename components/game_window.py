@@ -1,6 +1,7 @@
 import pygame 
+import os
 
-BACKGROUND_IMAGE_PATH = 'images/background.jpg'
+BACKGROUND_IMAGE_PATH = os.path.join(os.path.dirname(__file__), '..', 'images', 'background.jpg')
 
 class GameWindow:
     def __init__(self, width, height):
@@ -17,7 +18,7 @@ class GameWindow:
         pygame.display.flip()
     
     def clear(self):
-        self.screen.fill((0, 0, 0))
+        self.screen.blit(self.background, (0, 0))
 
     def draw_text(self, text, font, color, position):
         rendered_text = font.render(text, True, color)
