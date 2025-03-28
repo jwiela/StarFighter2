@@ -45,7 +45,7 @@ def updateGameLogic(player, asteroids, width, height, score):
 
     return score, False
 
-def drawGameObjects(window, player, asteroids, score, font):
+def drawGameObjects(window, player, asteroids, score, font, high_score):
     """draw the game objects."""
     player.draw(window.screen)
     for asteroid in asteroids:
@@ -56,3 +56,4 @@ def drawGameObjects(window, player, asteroids, score, font):
 
     
     window.draw_text(f"Score: {score}", font, (255, 255, 255), (10, 10))
+    window.draw_text(f"Score: {high_score}", font, (255, 255, 255), (10, 40))

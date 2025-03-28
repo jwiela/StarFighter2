@@ -4,16 +4,28 @@ from components.game_window import GameWindow
 from components.Asteroid import Asteroid
 import utils.collision as collision
 from utils.game_utils import handleEvents, updateGameLogic, drawGameObjects
+from components.login_screen import LoginScreen
+from utils.database import getHighscore, updateHighscore
 import sys
 
 WIDTH, HEIGHT = 800, 600
 
-def gameLoop():
-    # Initialize the game
+def main():
     pygame.init()
     window = GameWindow(WIDTH, HEIGHT)
     font = pygame.font.Font(None, 36)
+
+    username = showLoginScreen(window, font)
+    if not username:
+        pygame.quit()
+        sys.exit()
+    
+    gameLoop(window, username)
+
+def gameLoop(window, username):
+    # Initialize the game
     running = True
+    font = pygame.font.Font(None, 36)
     
     while running:  # Outer loop to allow game restart
         player = Player(WIDTH, HEIGHT)
@@ -21,6 +33,8 @@ def gameLoop():
         clock = pygame.time.Clock()
         score = 0
         gameOver = False
+
+        high_score = getHighscore(username)
         
         while not gameOver:
             window.clear()
@@ -33,9 +47,12 @@ def gameLoop():
             
             score, gameOver = updateGameLogic(player, asteroids, WIDTH, HEIGHT, score)
 
-            drawGameObjects(window, player, asteroids, score, font)
+            drawGameObjects(window, player, asteroids, score, font, high_score)
             window.update()
             clock.tick(30)  # Limit to 30 FPS
+        
+        if score > high_score:
+            updateHighscore(username, score)
 
         play_again = showGameOverScreen(window, font, score)
         if not play_again:
@@ -43,6 +60,27 @@ def gameLoop():
 
     pygame.quit()
     sys.exit()
+
+# Shows login screen and retuns username
+def showLoginScreen(window, font):
+    login_screen = LoginScreen(window)
+    username = None
+
+    while username is None:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            login_screen.handleEvent(event)
+        
+        login_screen.draw()
+
+        if login_screen.message == "Login successful":
+            username = login_screen.username
+        elif login_screen.message == "Registration successful":
+            username = login_screen.username
+    
+    return username
 
 def showGameOverScreen(window, font, score):
     """Displays Game Over screen with restart or quit options."""
