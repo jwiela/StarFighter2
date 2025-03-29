@@ -1,14 +1,15 @@
-import pygame 
+import pygame
 from utils.database import addUser, authenticateUser
 
 class LoginScreen:
     def __init__(self, window):
         self.window = window
         self.font = pygame.font.Font(None, 36)
+        self.title_font = pygame.font.Font(None, 72)  # Larger font for the title
         self.input_box = pygame.Rect(300, 200, 200, 40)
         self.password_box = pygame.Rect(300, 260, 200, 40)
-        self.login_button = pygame.Rect(300, 320, 200, 50)
-        self.register_button = pygame.Rect(300, 380, 200, 50)
+        self.login_button = pygame.Rect(300, 340, 200, 50)
+        self.register_button = pygame.Rect(300, 410, 200, 50)
         self.username = ''
         self.password = ''
         self.active_input = 'username'
@@ -17,22 +18,36 @@ class LoginScreen:
     # Draws the login screen
     def draw(self):
         self.window.clear()
-        self.window.draw_text('Login', self.font, (255, 255, 255), (360, 150))
 
-        pygame.draw.rect(self.window.screen, (255, 255, 255), self.input_box, 2)
-        pygame.draw.rect(self.window.screen, (255, 255, 255), self.password_box, 2)
-        pygame.draw.rect(self.window.screen, (0, 200, 0), self.login_button)
-        pygame.draw.rect(self.window.screen, (0, 0, 200), self.register_button)
+        # Background color
+        self.window.screen.fill((30, 30, 30))  # Dark gray background
 
-        self.window.draw_text('Username', self.font, (255, 255, 255), (150, 205))
-        self.window.draw_text('Password', self.font, (255, 255, 255), (150, 265))
-        self.window.draw_text(self.username, self.font, (255, 255, 255), (310, 205))
-        self.window.draw_text('*' * len(self.password), self.font, (255, 255, 255), (310, 265))
-        self.window.draw_text('Login', self.font, (255, 255, 255), (370, 335))
-        self.window.draw_text('Register', self.font, (255, 255, 255), (360, 395))
+        # Title
+        self.window.draw_text('Login', self.title_font, (255, 255, 255), (self.window.screen.get_width() // 2, 100), center=True)
 
+        # Input boxes
+        pygame.draw.rect(self.window.screen, (255, 255, 255), self.input_box, border_radius=10, width=2)
+        pygame.draw.rect(self.window.screen, (255, 255, 255), self.password_box, border_radius=10, width=2)
+
+        # Buttons
+        pygame.draw.rect(self.window.screen, (0, 200, 0), self.login_button, border_radius=10)  # Green button
+        pygame.draw.rect(self.window.screen, (0, 0, 200), self.register_button, border_radius=10)  # Blue button
+
+        # Labels
+        self.window.draw_text('Username:', self.font, (255, 255, 255), (self.input_box.x - 140, self.input_box.y + 10))
+        self.window.draw_text('Password:', self.font, (255, 255, 255), (self.password_box.x - 136, self.password_box.y + 10))
+
+        # Input text
+        self.window.draw_text(self.username, self.font, (255, 255, 255), (self.input_box.x + 10, self.input_box.y + 10))
+        self.window.draw_text('*' * len(self.password), self.font, (255, 255, 255), (self.password_box.x + 10, self.password_box.y + 10))
+
+        # Button text
+        self.window.draw_text('Login', self.font, (255, 255, 255), self.login_button.center, center=True)
+        self.window.draw_text('Register', self.font, (255, 255, 255), self.register_button.center, center=True)
+
+        # Error or success message
         if self.message:
-            self.window.draw_text(self.message, self.font, (255, 0, 0), (300, 450))
+            self.window.draw_text(self.message, self.font, (255, 0, 0), (self.window.screen.get_width() // 2, 500), center=True)
 
     # Handles events for the login screen
     def handleEvent(self, event):
