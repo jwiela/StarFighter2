@@ -44,10 +44,12 @@ def addUser(username, password):
             INSERT INTO users (username, password)
             VALUES (?, ?)
         ''', (username, hashed_password))
+        conn.commit()  # Commit the transaction
     except sqlite3.IntegrityError:
-        pass
+        print(f"User {username} already exists.")
+    finally:
+        conn.close()
 
-    conn.close()
 
 
 # Cheks if the user exists in the database and if the password is correct
@@ -81,14 +83,20 @@ def updateHighscore(username, score):
     result = cursor.fetchone()
 
     if result is None:
+        print(f"User {username} not found in the database.")
+        conn.close()
         return
     
-    if score > result[0]:
+    current_highscore = result[0]
+
+    # If the highscore is NULL or the new score is higher, update it
+    if current_highscore is None or score > current_highscore:
         cursor.execute('''
             UPDATE users
             SET highscore = ?
             WHERE username = ?
         ''', (score, username))
+        print(f"Highscore updated for user {username}: {score}")
 
     conn.commit()
     conn.close()
@@ -105,9 +113,9 @@ def getHighscore(username):
     result = cursor.fetchone()
 
     conn.close()
-    if result:
-        return result[0]
-    return 0
+    if result and result[0] is not None:
+        return result[0]  # Return the high score
+    return 0  # Return 0 if no high score is found
 
 initialazeDatabase()
 

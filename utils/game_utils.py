@@ -56,4 +56,4 @@ def drawGameObjects(window, player, asteroids, score, font, high_score):
 
     
     window.draw_text(f"Score: {score}", font, (255, 255, 255), (10, 10))
-    window.draw_text(f"Score: {high_score}", font, (255, 255, 255), (10, 40))
+    window.draw_text(f"Highscore: {high_score}", font, (255, 255, 255), (10, 40))
