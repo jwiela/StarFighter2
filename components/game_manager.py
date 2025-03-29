@@ -93,10 +93,23 @@ def showLoginScreen(window):
 
 
 def showGameOverScreen(window, font, score, username):
-    """Displays an improved Game Over screen with restart or quit options."""
+    """Displays an improved Game Over screen with centered elements."""
     high_score = getHighscore(username)
-    play_again_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 50, 200, 50)
-    quit_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 120, 200, 50)
+
+    # Define button dimensions
+    button_width = 200
+    button_height = 50
+    button_spacing = 20  # Space between buttons
+
+    # Calculate positions dynamically
+    title_y = HEIGHT // 4
+    score_y = title_y + 80
+    high_score_y = score_y + 40
+    play_again_y = high_score_y + 80
+    quit_y = play_again_y + button_height + button_spacing
+
+    play_again_rect = pygame.Rect(WIDTH // 2 - button_width // 2, play_again_y, button_width, button_height)
+    quit_rect = pygame.Rect(WIDTH // 2 - button_width // 2, quit_y, button_width, button_height)
 
     while True:
         # Clear the screen and set a background color
@@ -104,16 +117,16 @@ def showGameOverScreen(window, font, score, username):
 
         # Draw the "Game Over" title
         title_font = pygame.font.Font(None, 72)  # Larger font for the title
-        window.draw_text("GAME OVER", title_font, (255, 0, 0), (WIDTH // 2, HEIGHT // 3), center=True)
+        window.draw_text("GAME OVER", title_font, (255, 0, 0), (WIDTH // 2, title_y), center=True)
 
         # Display the score and high score
         if score > high_score:
-            window.draw_text("New High Score!", font, (255, 255, 0), (WIDTH // 2, HEIGHT // 3 + 60), center=True)
-            window.draw_text(f"Final Score: {score}", font, (255, 255, 255), (WIDTH // 2, HEIGHT // 3 + 100), center=True)
+            window.draw_text("New High Score!", font, (255, 255, 0), (WIDTH // 2, score_y), center=True)
+            window.draw_text(f"Final Score: {score}", font, (255, 255, 255), (WIDTH // 2, high_score_y), center=True)
             updateHighscore(username, score)  # Update high score in the database
         else:
-            window.draw_text(f"Final Score: {score}", font, (255, 255, 255), (WIDTH // 2, HEIGHT // 3 + 60), center=True)
-            window.draw_text(f"High Score: {high_score}", font, (255, 255, 255), (WIDTH // 2, HEIGHT // 3 + 100), center=True)
+            window.draw_text(f"Final Score: {score}", font, (255, 255, 255), (WIDTH // 2, score_y), center=True)
+            window.draw_text(f"High Score: {high_score}", font, (255, 255, 255), (WIDTH // 2, high_score_y), center=True)
 
         # Draw the "Play Again" button
         pygame.draw.rect(window.screen, (0, 200, 0), play_again_rect, border_radius=10)  # Green button with rounded corners

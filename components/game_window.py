@@ -21,6 +21,11 @@ class GameWindow:
         self.screen.blit(self.background, (0, 0))
 
     def draw_text(self, text, font, color, position, center=False):
-        rendered_text = font.render(text, True, color)
-        self.screen.blit(rendered_text, position)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        if center:
+            text_rect.center = position
+        else:
+            text_rect.topleft = position
+        self.screen.blit(text_surface, text_rect)
     
