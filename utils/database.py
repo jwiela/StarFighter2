@@ -117,6 +117,22 @@ def getHighscore(username):
         return result[0]  # Return the high score
     return 0  # Return 0 if no high score is found
 
+def getTopScores(limit = 5):
+    """Returns the top scores from the database"""
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        SELECT username, highscore
+        FROM users
+        WHERE highscore IS NOT NULL
+        ORDER BY highscore DESC
+        LIMIT ?''', (limit,))
+    top_scores = cursor.fetchall()
+    conn.close()
+    return top_scores
+
+
 initialazeDatabase()
 
 

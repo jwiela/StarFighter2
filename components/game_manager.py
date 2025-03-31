@@ -5,6 +5,7 @@ from components.register_screen import RegisterScreen
 from utils.game_utils import handleEvents, updateGameLogic, drawGameObjects
 from components.login_screen import LoginScreen
 from utils.database import getHighscore, updateHighscore
+from components.leaderboard_screen import LeaderboardScreen
 import sys
 
 WIDTH, HEIGHT = 800, 600
@@ -96,6 +97,10 @@ def showGameOverScreen(window, font, score, username):
     """Displays an improved Game Over screen with centered elements."""
     high_score = getHighscore(username)
 
+    high_score_sound = pygame.mixer.Sound('sounds/new_high.mp3')
+    lose_sound = pygame.mixer.Sound('sounds/gameover.wav')
+    high_score_sound.set_volume(0.5)
+
     # Define button dimensions
     button_width = 200
     button_height = 50
@@ -106,10 +111,18 @@ def showGameOverScreen(window, font, score, username):
     score_y = title_y + 80
     high_score_y = score_y + 40
     play_again_y = high_score_y + 80
+    leaderboard_y = high_score_y + 80
+    play_again_y = leaderboard_y + button_height + button_spacing
     quit_y = play_again_y + button_height + button_spacing
 
+    leaderboard_rect = pygame.Rect(WIDTH // 2 - button_width // 2, leaderboard_y, button_width, button_height)
     play_again_rect = pygame.Rect(WIDTH // 2 - button_width // 2, play_again_y, button_width, button_height)
     quit_rect = pygame.Rect(WIDTH // 2 - button_width // 2, quit_y, button_width, button_height)
+
+    if score > high_score:
+        high_score_sound.play()
+    else:
+        lose_sound.play()
 
     while True:
         # Clear the screen and set a background color
@@ -127,6 +140,11 @@ def showGameOverScreen(window, font, score, username):
         else:
             window.draw_text(f"Final Score: {score}", font, (255, 255, 255), (WIDTH // 2, score_y), center=True)
             window.draw_text(f"High Score: {high_score}", font, (255, 255, 255), (WIDTH // 2, high_score_y), center=True)
+
+        
+        # Draw the "Leaderboard" button
+        pygame.draw.rect(window.screen, (0, 0, 200), leaderboard_rect, border_radius=10)  # Blue button with rounded corners
+        window.draw_text("Leaderboard", font, (255, 255, 255), leaderboard_rect.center, center=True)
 
         # Draw the "Play Again" button
         pygame.draw.rect(window.screen, (0, 200, 0), play_again_rect, border_radius=10)  # Green button with rounded corners
@@ -146,6 +164,9 @@ def showGameOverScreen(window, font, score, username):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = event.pos
+                if leaderboard_rect.collidepoint(mouse_x, mouse_y):
+                    leaderboard_screen = LeaderboardScreen(window)
+                    leaderboard_screen.show()  # Show the leaderboard screen
                 if play_again_rect.collidepoint(mouse_x, mouse_y):
                     return True  # Restart the game
                 if quit_rect.collidepoint(mouse_x, mouse_y):

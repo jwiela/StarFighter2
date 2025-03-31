@@ -83,7 +83,6 @@ class LoginScreen:
     def handleLogin(self):
         if authenticateUser(self.username, self.password):
             self.message = 'Login successful!'
-            pygame.time.delay(1000)  # Delay to show message
             return True
         else:
             self.message = 'Invalid username or password.'

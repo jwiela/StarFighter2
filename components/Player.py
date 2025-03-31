@@ -15,6 +15,8 @@ class Player:
         self.shoot_cooldown = 0.2
         self.screen_width = width
         self.screen_height = height
+
+        self.shoot_sound = pygame.mixer.Sound('sounds/gun.mp3')
     
     def move(self, direction):
         if direction == 'left' and self.x>0:
@@ -31,6 +33,7 @@ class Player:
         if current_time - self.last_shot_time >= self.shoot_cooldown:
             self.bullets.append([self.x + 20, self.y])
             self.last_shot_time = current_time
+            self.shoot_sound.play()
 
     def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))
